@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../constants.dart';
+import 'package:go_router/go_router.dart';
 
 class Layout extends StatefulWidget {
   Widget child;
@@ -36,24 +37,40 @@ class LayoutState extends State<Layout> {
 
   @override
   Widget build(BuildContext context) {
+    final goRouter = GoRouter.of(context);
+    final canGoBack = goRouter.canPop();
     return Scaffold(
-        appBar: const PreferredSize(
-            preferredSize: Size.fromHeight(67.0), // Default AppBar height
-            child: Row(children: [
-              SizedBox(width: 16.0),
-              Text(
-                ' Ricetta',
-                style: TextStyle(
-                  color: Color(0xFFFFD60A),
-                  fontSize: 28,
-                  fontFamily: 'Arial Black',
-                  fontWeight: FontWeight.w900,
-                  height: 0,
-                ),
-              ),
-              SizedBox(width: 24.0),
-              Expanded(child: SearchBar())
-            ])),
+        appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(67.0), // Default AppBar height
+            child: Padding(
+                padding: const EdgeInsets.only(top: 12.0),
+                child: Row(children: [
+                  canGoBack
+                      ? IconButton(
+                          onPressed: () {
+                            context.pop();
+                          },
+                          icon: const Icon(Icons.arrow_back),
+                        )
+                      : const SizedBox(width: 2.0),
+                  Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: TextButton(
+                        onPressed: () {
+                          context.go('/');
+                        },
+                        child: const Text('Ricetta',
+                            style: TextStyle(
+                              color: Color(0xFFFFD60A),
+                              fontSize: 28,
+                              fontFamily: 'Arial Black',
+                              fontWeight: FontWeight.w900,
+                              height: 0,
+                            )),
+                      )),
+                  const SizedBox(width: 24.0),
+                  const Expanded(child: SearchBar())
+                ]))),
         bottomNavigationBar: Container(
             decoration: const BoxDecoration(
               boxShadow: [
@@ -96,8 +113,8 @@ class SearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      margin: const EdgeInsets.only(right: 22, top: 16, bottom: 12),
+      height: 40.0,
+      margin: const EdgeInsets.only(right: 22),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14.0),

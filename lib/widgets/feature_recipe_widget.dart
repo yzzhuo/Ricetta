@@ -10,11 +10,12 @@ class FeatureRecipeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
-          context.go('/recipe/1');
+          context.push('/recipe/1');
         },
         child: Container(
+            height: 204,
             margin: const EdgeInsets.only(right: 16.0),
-            width: MediaQuery.of(context).size.width * 0.9,
+            width: MediaQuery.of(context).size.width - 32,
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16.0),
@@ -61,7 +62,7 @@ class FeatureRecipeWidget extends StatelessWidget {
                                 fontWeight: FontWeight.w600)),
                         IconButton(
                             onPressed: () {
-                              print('object');
+                              print('love');
                             },
                             icon: const Icon(Icons.favorite_border))
                       ]))

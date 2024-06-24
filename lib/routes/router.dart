@@ -12,9 +12,7 @@ final router = GoRouter(
         builder: (context, state) => Layout(child: const HomeScreen())),
     GoRoute(
         path: '/recipe/:receipeId',
-        builder: (context, state) => Layout(
-              child: const RecipeDetailScreen(),
-            )),
+        builder: (context, state) => Layout(child: const RecipeDetailScreen())),
     GoRoute(
       path: '/category',
       builder: (context, state) => Layout(
@@ -24,7 +22,7 @@ final router = GoRouter(
     GoRoute(
       path: '/category/:categoryId',
       builder: (context, state) => Layout(
-        child: const RecipeCategoryDetailScreen(),
+        child: RecipeCategoryDetailScreen(),
       ),
     )
   ],
