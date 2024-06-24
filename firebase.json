@@ -1,0 +1,23 @@
+{
+  "flutter": {
+    "platforms": {
+      "ios": {
+        "default": {
+          "projectId": "flutter-recipe-app-fa71f",
+          "appId": "1:698670915631:ios:23682f66dc5217d56166da",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "flutter-recipe-app-fa71f",
+          "configurations": {
+            "ios": "1:698670915631:ios:23682f66dc5217d56166da",
+            "web": "1:698670915631:web:0b299c451bcf07ee6166da"
+          }
+        }
+      }
+    }
+  }
+}
