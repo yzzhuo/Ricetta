@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import './widgets/layout.dart';
-import '../screens/home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'routes/router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,16 +28,14 @@ class MyApp extends StatelessWidget {
       seedColor: const Color(0xFFFFD60A),
       primary: const Color(0xFFFFD60A),
     );
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Ricetta',
       theme: ThemeData(
         colorScheme: colorScheme,
         useMaterial3: true,
       ),
-      home: Layout(
-        child: const HomeScreen(),
-      ),
+      routerConfig: router,
     );
   }
 }

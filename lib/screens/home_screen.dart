@@ -3,6 +3,7 @@ import 'package:Ricetta/widgets/feature_recipe_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:Ricetta/models/category.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -57,7 +58,7 @@ class HomeScreen extends StatelessWidget {
           ),
           IconButton(
               onPressed: () {
-                print('object');
+                context.go('/category');
               },
               icon: const Icon(Icons.arrow_forward_ios)),
         ]),
@@ -74,52 +75,56 @@ class HomeScreen extends StatelessWidget {
               },
               itemBuilder: (content, index) {
                 final category = showCategories[index];
-                return Container(
-                  width: double.infinity,
-                  height: 74,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 18, vertical: 5),
-                  clipBehavior: Clip.antiAlias,
-                  decoration: ShapeDecoration(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                          child: Text(category.name,
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                height: 0,
-                              ))),
-                      SizedBox(
-                        width: 76,
-                        child: FutureBuilder(
-                          future: getImageUrl(category.image),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<String> snapshot) {
-                            if (snapshot.connectionState ==
-                                    ConnectionState.done &&
-                                snapshot.hasData) {
-                              return Image.network(snapshot.data!);
-                            } else if (snapshot.error != null) {
-                              // Handle errors
-                              return const Icon(Icons.error);
-                            } else {
-                              // Placeholder for loading state
-                              return const CircularProgressIndicator();
-                            }
-                          },
+                return GestureDetector(
+                    onTap: () {
+                      context.go('/category/cid1');
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      height: 74,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 18, vertical: 5),
+                      clipBehavior: Clip.antiAlias,
+                      decoration: ShapeDecoration(
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      )
-                    ],
-                  ),
-                );
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                              child: Text(category.name,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    height: 0,
+                                  ))),
+                          SizedBox(
+                            width: 76,
+                            child: FutureBuilder(
+                              future: getImageUrl(category.image),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<String> snapshot) {
+                                if (snapshot.connectionState ==
+                                        ConnectionState.done &&
+                                    snapshot.hasData) {
+                                  return Image.network(snapshot.data!);
+                                } else if (snapshot.error != null) {
+                                  // Handle errors
+                                  return const Icon(Icons.error);
+                                } else {
+                                  // Placeholder for loading state
+                                  return const CircularProgressIndicator();
+                                }
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ));
               }))
     ]);
   }
