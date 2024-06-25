@@ -1,4 +1,3 @@
-import 'package:Ricetta/models/receipe.dart';
 import 'package:Ricetta/widgets/feature_recipe_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -21,14 +20,14 @@ class RecipeCategoryDetailScreen extends StatelessWidget {
             )),
       ),
       const SizedBox(height: 24.0),
-      Expanded(
-          child: ListView(
-        children: recipes
-            .map((recipe) => Padding(
-                padding: const EdgeInsets.only(bottom: 12.0),
-                child: FeatureRecipeWidget(recipe: recipe)))
-            .toList(),
-      )),
+      // Expanded(
+      //     child: ListView(
+      //   children: recipes
+      //       .map((recipe) => Padding(
+      //           padding: const EdgeInsets.only(bottom: 12.0),
+      //           child: FeatureRecipeWidget(recipe: recipe)))
+      //       .toList(),
+      // )),
     ]);
   }
 }

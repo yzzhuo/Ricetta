@@ -1,31 +1,32 @@
-import 'package:Ricetta/models/receipe.dart';
+import 'package:Ricetta/models/recipe.dart';
 import 'package:Ricetta/widgets/feature_recipe_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '/widgets/category_card.dart';
 import '/providers/category_provider.dart';
+import '/providers/recipe_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Expanded(child: FeatureRecipesWidget(recipes: recipes)),
-      const Expanded(child: CategoriesList())
+    return const Column(children: [
+      Expanded(child: FeatureRecipesWidget()),
+      Expanded(child: CategoriesList())
     ]);
   }
 }
 
-class FeatureRecipesWidget extends StatelessWidget {
-  const FeatureRecipesWidget({super.key, required this.recipes});
-  final List<Recipe> recipes;
+class FeatureRecipesWidget extends ConsumerWidget {
+  const FeatureRecipesWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final recipeState = ref.watch(recipesProvider);
+    final recipes = recipeState.recipes;
     List<Recipe> lastFiveRecipes;
-
     // Get the last 5 recipes
     if (recipes.length <= 5) {
       lastFiveRecipes =

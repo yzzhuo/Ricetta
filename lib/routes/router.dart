@@ -11,19 +11,21 @@ final router = GoRouter(
         path: '/',
         builder: (context, state) => Layout(child: const HomeScreen())),
     GoRoute(
-        path: '/recipe/:receipeId',
-        builder: (context, state) => Layout(child: const RecipeDetailScreen())),
+        path: '/recipe/:recipeId',
+        builder: (context, state) => Layout(
+            child: RecipeDetailScreen(
+                recipeId: state.pathParameters['recipeId'] ?? ''))),
     GoRoute(
       path: '/category',
       builder: (context, state) => Layout(
         child: const RecipeCategoryScreen(),
       ),
     ),
-    GoRoute(
-      path: '/category/:categoryId',
-      builder: (context, state) => Layout(
-        child: RecipeCategoryDetailScreen(),
-      ),
-    )
+    // GoRoute(
+    //   path: '/category/:categoryId',
+    //   builder: (context, state) => Layout(
+    //     child: RecipeCategoryDetailScreen(),
+    //   ),
+    // )
   ],
 );

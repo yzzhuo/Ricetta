@@ -1,21 +1,28 @@
-import 'package:Ricetta/models/receipe.dart';
+import 'package:Ricetta/models/recipe.dart';
+import 'package:Ricetta/providers/recipe_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class RecipeDetailScreen extends StatefulWidget {
-  const RecipeDetailScreen({super.key});
+class RecipeDetailScreen extends ConsumerStatefulWidget {
+  final String recipeId;
+  const RecipeDetailScreen({super.key, required this.recipeId});
 
   @override
-  State<RecipeDetailScreen> createState() => _RecipeDetailScreenState();
+  _RecipeDetailScreenState createState() => _RecipeDetailScreenState();
 }
 
-class _RecipeDetailScreenState extends State<RecipeDetailScreen>
+class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen>
     with TickerProviderStateMixin {
   late final TabController _tabController;
-  Recipe recipe = recipes[0];
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Trigger fetching the question when the widget is first built
+      ref.read(recipesProvider.notifier).getRecipeDetailById(widget.recipeId);
+    });
     _tabController = TabController(length: 3, vsync: this);
   }
 
@@ -27,6 +34,13 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
 
   @override
   Widget build(BuildContext context) {
+    final recipeState = ref.watch(recipesProvider);
+    final recipe = recipeState.recipe;
+
+    if (recipe == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return Column(children: [
       SizedBox(
         height: 226,

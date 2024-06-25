@@ -1,4 +1,4 @@
-import 'package:Ricetta/models/receipe.dart';
+import 'package:Ricetta/models/recipe.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -10,7 +10,7 @@ class FeatureRecipeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
-          context.push('/recipe/1');
+          context.push('/recipe/${recipe.id}');
         },
         child: Container(
             height: 204,
