@@ -1,13 +1,16 @@
-import 'package:Ricetta/models/category.dart';
 import 'package:Ricetta/widgets/category_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '/providers/category_provider.dart';
 
-class RecipeCategoryScreen extends StatelessWidget {
+class RecipeCategoryScreen extends ConsumerWidget {
   const RecipeCategoryScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final categories = ref.watch(recipeCategoriesProvider);
+
     return Column(children: [
       const SizedBox(height: 24.0),
       Container(
