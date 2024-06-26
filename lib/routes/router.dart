@@ -7,6 +7,7 @@ import '../screens/recipe_detail_screen.dart';
 import '../screens/recipe_category_screen.dart';
 import '../screens/recipe_category_detail_screen.dart';
 import '../screens/signup_screen.dart';
+import '../screens/setting_screen.dart';
 
 final router = GoRouter(
   routes: [
@@ -34,5 +35,7 @@ final router = GoRouter(
     GoRoute(
         path: '/profile', builder: (context, state) => const ProfileScreen()),
     GoRoute(path: '/signup', builder: (context, state) => const SignupScreen()),
+    GoRoute(
+        path: '/settings', builder: (context, state) => const SettingScreen()),
   ],
 );
