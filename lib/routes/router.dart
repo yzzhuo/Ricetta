@@ -21,11 +21,12 @@ final router = GoRouter(
         child: const RecipeCategoryScreen(),
       ),
     ),
-    // GoRoute(
-    //   path: '/category/:categoryId',
-    //   builder: (context, state) => Layout(
-    //     child: RecipeCategoryDetailScreen(),
-    //   ),
-    // )
+    GoRoute(
+      path: '/category/:categoryId',
+      builder: (context, state) => Layout(
+        child: RecipeCategoryDetailScreen(
+            categoryId: state.pathParameters['categoryId'] ?? ''),
+      ),
+    )
   ],
 );

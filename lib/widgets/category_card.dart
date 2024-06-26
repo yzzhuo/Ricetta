@@ -17,7 +17,7 @@ class CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
-          context.push('/category/cid1');
+          context.push('/category/${category.id}');
         },
         child: Container(
           width: double.infinity,
