@@ -1,9 +1,12 @@
 import 'package:go_router/go_router.dart';
+
 import '../widgets/layout.dart';
 import '../screens/home_screen.dart';
+import 'package:Ricetta/screens/profile_screen.dart';
 import '../screens/recipe_detail_screen.dart';
 import '../screens/recipe_category_screen.dart';
 import '../screens/recipe_category_detail_screen.dart';
+import '../screens/signup_screen.dart';
 
 final router = GoRouter(
   routes: [
@@ -27,6 +30,9 @@ final router = GoRouter(
         child: RecipeCategoryDetailScreen(
             categoryId: state.pathParameters['categoryId'] ?? ''),
       ),
-    )
+    ),
+    GoRoute(
+        path: '/profile', builder: (context, state) => const ProfileScreen()),
+    GoRoute(path: '/signup', builder: (context, state) => const SignupScreen()),
   ],
 );

@@ -69,7 +69,15 @@ class LayoutState extends State<Layout> {
                             )),
                       )),
                   const SizedBox(width: 24.0),
-                  const Expanded(child: SearchBar())
+                  const Expanded(child: SearchBar()),
+                  const SizedBox(width: 8.0),
+                  IconButton(
+                      onPressed: () {
+                        context.go('/profile');
+                      },
+                      icon: const Icon(Icons.account_circle,
+                          color: kPrimaryLabelColor)),
+                  const SizedBox(width: 4.0),
                 ]))),
         bottomNavigationBar: Container(
             decoration: const BoxDecoration(
@@ -114,7 +122,6 @@ class SearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 40.0,
-      margin: const EdgeInsets.only(right: 22),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14.0),
