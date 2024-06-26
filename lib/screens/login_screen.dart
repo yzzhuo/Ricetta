@@ -1,10 +1,54 @@
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final emailInputController = TextEditingController();
+  final passwordInputController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    emailInputController.dispose();
+    passwordInputController.dispose();
+    super.dispose();
+  }
+
+  alert(String text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(text)),
+    );
+  }
+
+  handleLoginWithAccount() async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailInputController.text,
+        password: passwordInputController.text,
+      );
+      alert('Login successfully');
+      Future.delayed(const Duration(seconds: 2), () {
+        context.push('/');
+      });
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        alert('No user found for that email.');
+      } else if (e.code == 'invalid-credential') {
+        alert('Wrong password provided for that user.');
+      } else {
+        alert(e.toString());
+      }
+    } catch (e) {
+      alert(e.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,48 +69,52 @@ class LoginScreen extends StatelessWidget {
           SizedBox(
               width: double.infinity,
               child: Column(children: [
-                TextFormField(
+                TextField(
+                    controller: emailInputController,
                     decoration: const InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(4),
-                      topRight: Radius.circular(4),
-                      bottomLeft:
-                          Radius.circular(0.0), // Minimize bottom effect
-                      bottomRight:
-                          Radius.circular(0.0), // Minimize bottom effect
-                    ),
-                    borderSide: BorderSide(color: Colors.grey, width: 0.0),
-                  ),
-                  border: OutlineInputBorder(),
-                  labelText: 'Email Address',
-                  filled: true,
-                  fillColor: Colors.white,
-                )),
-                TextFormField(
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(4),
+                          topRight: Radius.circular(4),
+                          bottomLeft:
+                              Radius.circular(0.0), // Minimize bottom effect
+                          bottomRight:
+                              Radius.circular(0.0), // Minimize bottom effect
+                        ),
+                        borderSide: BorderSide(color: Colors.grey, width: 0.0),
+                      ),
+                      border: OutlineInputBorder(),
+                      labelText: 'Email Address',
+                      filled: true,
+                      fillColor: Colors.white,
+                    )),
+                TextField(
+                    controller: passwordInputController,
+                    obscureText: true,
                     decoration: const InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(0),
-                      topRight: Radius.circular(0),
-                      bottomLeft:
-                          Radius.circular(4.0), // Minimize bottom effect
-                      bottomRight:
-                          Radius.circular(4.0), // Minimize bottom effect
-                    ),
-                    borderSide: BorderSide(color: Colors.grey, width: 0.0),
-                  ),
-                  border: OutlineInputBorder(),
-                  labelText: 'Password',
-                  filled: true,
-                  fillColor: Colors.white,
-                )),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(0),
+                          topRight: Radius.circular(0),
+                          bottomLeft:
+                              Radius.circular(4.0), // Minimize bottom effect
+                          bottomRight:
+                              Radius.circular(4.0), // Minimize bottom effect
+                        ),
+                        borderSide: BorderSide(color: Colors.grey, width: 0.0),
+                      ),
+                      border: OutlineInputBorder(),
+                      labelText: 'Password',
+                      filled: true,
+                      fillColor: Colors.white,
+                    )),
                 const SizedBox(height: 26),
                 MaterialButton(
                   minWidth: double.infinity,
                   padding:
                       const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
                   color: Theme.of(context).colorScheme.primary,
+                  onPressed: handleLoginWithAccount,
                   child: const Text(
                     'Continue',
                     textAlign: TextAlign.center,
@@ -75,7 +123,6 @@ class LoginScreen extends StatelessWidget {
                       fontSize: 16,
                     ),
                   ),
-                  onPressed: () async {},
                 ),
                 const SizedBox(height: 8),
                 Row(

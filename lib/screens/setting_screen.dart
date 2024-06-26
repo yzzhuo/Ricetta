@@ -62,7 +62,7 @@ class SettingScreen extends ConsumerWidget {
                     onPressed: () async {
                       await FirebaseAuth.instance.signOut();
                       await Future.delayed(const Duration(seconds: 1), () {
-                        context.push('/');
+                        context.push('/profile');
                       });
                     },
                   ),
