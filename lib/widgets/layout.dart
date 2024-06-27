@@ -115,36 +115,55 @@ class LayoutState extends State<Layout> {
   }
 }
 
-class SearchBar extends StatelessWidget {
+class SearchBar extends StatefulWidget {
   const SearchBar({super.key});
+
+  @override
+  _SearchBarState createState() => _SearchBarState();
+}
+
+class _SearchBarState extends State<SearchBar> {
+  final TextEditingController _controller = TextEditingController();
+
+  void _search() {
+    final String searchText = _controller.text;
+    context.push('/recipes?search=$searchText');
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 40.0,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14.0),
-        boxShadow: const [
-          BoxShadow(
-            color: kShadowColor,
-            offset: Offset(0, 2),
-            blurRadius: 16.0,
-          )
-        ],
-      ),
-      child: TextField(
-        style: const TextStyle(fontSize: 15.0),
-        cursorColor: kPrimaryLabelColor,
-        decoration: const InputDecoration(
-          prefixIcon: Icon(Icons.search, color: kPrimaryLabelColor),
-          border: InputBorder.none,
-          hintText: "Search for recepies",
+        height: 40.0,
+        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+        margin: const EdgeInsets.all(0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14.0),
+          boxShadow: const [
+            BoxShadow(
+              color: kShadowColor,
+              offset: Offset(0, 2),
+              blurRadius: 16.0,
+            )
+          ],
         ),
-        onChanged: (newText) {
-          print(newText);
-        },
-      ),
-    );
+        child: Row(children: [
+          Expanded(
+              child: TextField(
+            style: const TextStyle(fontSize: 15.0, height: 0.1),
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              hintText: "Search for recepies",
+              filled: true,
+              fillColor: Colors.white,
+              contentPadding: EdgeInsets.fromLTRB(
+                  0, 10.0, 0, 10.0), // Adjust padding as needed
+            ),
+            controller: _controller,
+          )),
+          IconButton(
+              onPressed: _search,
+              icon: const Icon(Icons.search, color: kPrimaryLabelColor))
+        ]));
   }
 }

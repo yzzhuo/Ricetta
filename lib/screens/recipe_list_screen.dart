@@ -6,7 +6,10 @@ import 'package:flutter/material.dart';
 
 class RecipeCategoryDetailScreen extends ConsumerStatefulWidget {
   final String categoryId;
-  const RecipeCategoryDetailScreen({super.key, required this.categoryId});
+  final String searchName;
+
+  const RecipeCategoryDetailScreen(
+      {super.key, this.categoryId = '', this.searchName = ''});
 
   @override
   _RecipeCategoryDetailState createState() => _RecipeCategoryDetailState();
@@ -28,18 +31,29 @@ class _RecipeCategoryDetailState
   Widget build(BuildContext context) {
     final recipeState = ref.watch(recipesProvider);
     final categoryState = ref.watch(recipeCategoriesProvider);
-    final categoryName = categoryState
-        .firstWhere((category) => category.id == widget.categoryId)
-        .name;
-    final currentRecipes = recipeState.recipes
-        .where((recipe) => recipe.categoryId == widget.categoryId)
-        .toList();
+    final title = widget.categoryId != ''
+        ? categoryState
+            .firstWhere((category) => category.id == widget.categoryId)
+            .name
+        : 'Recipes';
+    final currentRecipes = widget.categoryId != ''
+        ? recipeState.recipes
+            .where((recipe) => recipe.categoryId == widget.categoryId)
+            .toList()
+        : recipeState.recipes;
+    final results = widget.searchName != ''
+        ? recipeState.recipes
+            .where((recipe) => recipe.title
+                .toLowerCase()
+                .contains(widget.searchName.toLowerCase()))
+            .toList()
+        : currentRecipes;
 
     return Column(children: [
       const SizedBox(height: 24.0),
       Container(
         alignment: Alignment.centerLeft,
-        child: Text(categoryName,
+        child: Text(title,
             style: const TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.w700,
@@ -60,7 +74,7 @@ class _RecipeCategoryDetailState
                 ))
               : Expanded(
                   child: ListView(
-                  children: currentRecipes
+                  children: results
                       .map((recipe) => Padding(
                           padding: const EdgeInsets.only(bottom: 12.0),
                           child: FeatureRecipeWidget(recipe: recipe)))

@@ -4,7 +4,7 @@ import '../screens/home_screen.dart';
 import 'package:Ricetta/screens/profile_screen.dart';
 import '../screens/recipe_detail_screen.dart';
 import '../screens/recipe_category_screen.dart';
-import '../screens/recipe_category_detail_screen.dart';
+import '../screens/recipe_list_screen.dart';
 import '../screens/signup_screen.dart';
 import '../screens/setting_screen.dart';
 import 'package:Ricetta/screens/recipe_edit_screen.dart';
@@ -29,12 +29,17 @@ final router = GoRouter(
       ),
     ),
     GoRoute(
-      path: '/category/:categoryId',
-      builder: (context, state) => Layout(
-        child: RecipeCategoryDetailScreen(
-            categoryId: state.pathParameters['categoryId'] ?? ''),
-      ),
-    ),
+        path: '/recipes',
+        builder: (context, state) {
+          final categoryId = state.uri.queryParameters['categoryId'] ?? '';
+          final searchName = state.uri.queryParameters['search'] ?? '';
+
+          return Layout(
+              child: RecipeCategoryDetailScreen(
+            categoryId: categoryId,
+            searchName: searchName,
+          ));
+        }),
     GoRoute(
         path: '/profile', builder: (context, state) => const ProfileScreen()),
     GoRoute(path: '/signup', builder: (context, state) => const SignupScreen()),
