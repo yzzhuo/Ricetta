@@ -1,13 +1,39 @@
+import 'package:Ricetta/providers/recipe_provider.dart';
+import 'package:Ricetta/providers/user_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Ricetta/models/recipe.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class FeatureRecipeWidget extends StatelessWidget {
+class FeatureRecipeWidget extends ConsumerWidget {
   final Recipe recipe;
   const FeatureRecipeWidget({super.key, required this.recipe});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(userProvider);
+
+    handleFavourte() async {
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please login to add to favourite')),
+        );
+      } else {
+        try {
+          await ref
+              .read(recipesProvider.notifier)
+              .addFavoriteRecipe(recipe.id!, user.uid, !recipe.isFavourite);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Added to favourites successfully!')),
+          );
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to add to favourite')),
+          );
+        }
+      }
+    }
+
     return GestureDetector(
         onTap: () {
           context.push('/recipe/${recipe.id}');
@@ -61,10 +87,10 @@ class FeatureRecipeWidget extends StatelessWidget {
                                 fontSize: 20,
                                 fontWeight: FontWeight.w600)),
                         IconButton(
-                            onPressed: () {
-                              print('love');
-                            },
-                            icon: const Icon(Icons.favorite_border))
+                            onPressed: handleFavourte,
+                            icon: recipe.isFavourite
+                                ? const Icon(Icons.favorite)
+                                : const Icon(Icons.favorite_border))
                       ]))
             ])));
   }

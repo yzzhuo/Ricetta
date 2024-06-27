@@ -1,13 +1,15 @@
+import 'package:Ricetta/providers/user_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
 import 'package:go_router/go_router.dart';
 
-class Layout extends StatefulWidget {
+class Layout extends ConsumerStatefulWidget {
   Widget child;
   Layout({super.key, required this.child});
 
   @override
-  State<Layout> createState() => LayoutState();
+  _LayoutState createState() => _LayoutState();
 }
 
 class NavigateOption {
@@ -17,7 +19,7 @@ class NavigateOption {
   NavigateOption({required this.name, required this.icon, required this.path});
 }
 
-class LayoutState extends State<Layout> {
+class _LayoutState extends ConsumerState<Layout> {
   int _selectedIndex = 0;
   final options = [
     NavigateOption(name: 'Home', icon: Icons.home, path: '/'),
@@ -36,6 +38,8 @@ class LayoutState extends State<Layout> {
   Widget build(BuildContext context) {
     final goRouter = GoRouter.of(context);
     final canGoBack = goRouter.canPop();
+    final user = ref.watch(userProvider);
+
     return Scaffold(
         appBar: PreferredSize(
             preferredSize: const Size.fromHeight(67.0), // Default AppBar height
@@ -68,12 +72,24 @@ class LayoutState extends State<Layout> {
                   const SizedBox(width: 24.0),
                   const Expanded(child: SearchBar()),
                   const SizedBox(width: 8.0),
-                  IconButton(
-                      onPressed: () {
-                        context.push('/profile');
-                      },
-                      icon: const Icon(Icons.account_circle,
-                          color: kPrimaryLabelColor)),
+                  user == null
+                      ? TextButton(
+                          onPressed: () {
+                            context.push('/profile');
+                          },
+                          child: const Text('Login',
+                              style: TextStyle(
+                                color: kPrimaryLabelColor,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              )),
+                        )
+                      : IconButton(
+                          onPressed: () {
+                            context.push('/profile');
+                          },
+                          icon: const Icon(Icons.account_circle,
+                              color: kPrimaryLabelColor)),
                   const SizedBox(width: 4.0),
                 ]))),
         bottomNavigationBar: Container(

@@ -18,6 +18,7 @@ class Recipe {
   final List<Ingredient> ingredients;
   final List<String> steps;
   final String categoryId;
+  late bool isFavourite;
 
   Recipe({
     required this.title,
@@ -27,10 +28,12 @@ class Recipe {
     this.category,
     required this.categoryId,
     this.id,
+    this.isFavourite = false,
   });
 
   factory Recipe.fromFirestore(
-      Map<String, dynamic> data, List<RecipeCategory> category, String id) {
+      Map<String, dynamic> data, List<RecipeCategory> category, String id,
+      {bool isFavourite = false}) {
     return Recipe(
       id: id,
       title: data['title'],
@@ -41,6 +44,7 @@ class Recipe {
       steps: (data['steps'] as List).map((e) => e.toString()).toList(),
       category: category.firstWhere((cat) => cat.id == data['categoryId']),
       categoryId: data['categoryId'],
+      isFavourite: isFavourite,
     );
   }
 
