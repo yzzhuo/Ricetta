@@ -37,12 +37,17 @@ class FeatureRecipesWidget extends ConsumerWidget {
     }
     return Column(
       children: [
-        Container(
-            alignment: Alignment.centerLeft,
-            child: const Text(
-              'Feature Recipes',
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700),
-            )),
+        Row(children: [
+          const Text(
+            'Lastest Recipes',
+            style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700),
+          ),
+          IconButton(
+              onPressed: () {
+                context.push('/recipes');
+              },
+              icon: const Icon(Icons.arrow_forward_ios)),
+        ]),
         const SizedBox(height: 12.0),
         SizedBox(
             height: 284,

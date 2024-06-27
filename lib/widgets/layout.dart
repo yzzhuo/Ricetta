@@ -10,29 +10,26 @@ class Layout extends StatefulWidget {
   State<Layout> createState() => LayoutState();
 }
 
+class NavigateOption {
+  final String name;
+  final IconData icon;
+  final String path;
+  NavigateOption({required this.name, required this.icon, required this.path});
+}
+
 class LayoutState extends State<Layout> {
   int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0: Home',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 1: Business',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
+  final options = [
+    NavigateOption(name: 'Home', icon: Icons.home, path: '/'),
+    NavigateOption(name: 'Saved', icon: Icons.bookmark, path: '/recipes'),
+    NavigateOption(name: 'Profile', icon: Icons.person, path: '/profile'),
   ];
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+    context.push(options[index].path);
   }
 
   @override
@@ -73,7 +70,7 @@ class LayoutState extends State<Layout> {
                   const SizedBox(width: 8.0),
                   IconButton(
                       onPressed: () {
-                        context.go('/profile');
+                        context.push('/profile');
                       },
                       icon: const Icon(Icons.account_circle,
                           color: kPrimaryLabelColor)),
@@ -91,20 +88,10 @@ class LayoutState extends State<Layout> {
               ],
             ),
             child: BottomNavigationBar(
-              items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.bookmark),
-                  label: 'Saved',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.person),
-                  label: 'Profile',
-                ),
-              ],
+              items: options
+                  .map((option) => BottomNavigationBarItem(
+                      icon: Icon(option.icon), label: option.name))
+                  .toList(),
               currentIndex: _selectedIndex,
               onTap: _onItemTapped,
             )),
