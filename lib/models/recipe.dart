@@ -1,13 +1,21 @@
 import 'package:Ricetta/models/category.dart';
 
 class Ingredient {
-  final String name;
-  final String quantity;
+  String name;
+  String quantity;
 
   Ingredient({
     required this.name,
     required this.quantity,
   });
+
+  set(String key, String value) {
+    if (key == 'name') {
+      name = value;
+    } else if (key == 'quantity') {
+      quantity = value;
+    }
+  }
 }
 
 class Recipe {
@@ -15,7 +23,7 @@ class Recipe {
   RecipeCategory? category;
   final String title;
   final String imageUrl;
-  final List<Ingredient> ingredients;
+  List<Ingredient> ingredients;
   final List<String> steps;
   final String categoryId;
   late bool isFavourite;

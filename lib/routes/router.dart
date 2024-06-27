@@ -15,8 +15,7 @@ final router = GoRouter(
         path: '/',
         builder: (context, state) => Layout(child: const HomeScreen())),
     GoRoute(
-        path: '/recipe/edit',
-        builder: (context, state) => const RecipeEditScreen()),
+        path: '/recipe/edit', builder: (context, state) => RecipeEditScreen()),
     GoRoute(
         path: '/recipe/:recipeId',
         builder: (context, state) => Layout(
