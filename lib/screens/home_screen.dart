@@ -1,4 +1,5 @@
 import 'package:Ricetta/models/recipe.dart';
+import 'package:Ricetta/utils/breakpoint.dart';
 import 'package:Ricetta/widgets/feature_recipe_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,6 +28,7 @@ class FeatureRecipesWidget extends ConsumerWidget {
     final recipeState = ref.watch(recipesProvider);
     final recipes = recipeState.recipes;
     List<Recipe> lastFiveRecipes;
+    final size = MediaQuery.of(context).size;
     // Get the last 5 recipes
     if (recipes.length <= 5) {
       lastFiveRecipes =
@@ -54,7 +56,10 @@ class FeatureRecipesWidget extends ConsumerWidget {
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: lastFiveRecipes
-                  .map((recipe) => FeatureRecipeWidget(recipe: recipe))
+                  .map((recipe) => SizedBox(
+                        width: size.width < Breakpoints.md ? null : 250,
+                        child: FeatureRecipeWidget(recipe: recipe),
+                      ))
                   .toList(),
             )),
       ],
@@ -68,6 +73,8 @@ class CategoriesList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final categories = ref.watch(recipeCategoriesProvider);
+    final size = MediaQuery.of(context).size;
+    final isMobile = size.width < Breakpoints.md;
 
     return Column(children: [
       Container(
@@ -87,18 +94,32 @@ class CategoriesList extends ConsumerWidget {
       ),
       const SizedBox(height: 12.0),
       Expanded(
-          child: ListView.separated(
-              itemCount:
-                  3, // Replace 'items.length' with the actual length of your list
-              separatorBuilder: (context, index) {
-                return const SizedBox(
-                    height:
-                        10); // Adjust the height for desired space between items
-              },
-              itemBuilder: (content, index) {
-                final category = categories[index];
-                return CategoryCard(category: category);
-              }))
+          child: isMobile
+              ? ListView.separated(
+                  itemCount:
+                      3, // Replace 'items.length' with the actual length of your list
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(
+                        height:
+                            10); // Adjust the height for desired space between items
+                  },
+                  itemBuilder: (content, index) {
+                    final category = categories[index];
+                    return CategoryCard(category: category);
+                  })
+              : GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: 6,
+                  ),
+                  itemCount: categories.length,
+                  itemBuilder: (context, index) {
+                    final category = categories[index];
+                    return CategoryCard(category: category);
+                  },
+                ))
     ]);
   }
 }

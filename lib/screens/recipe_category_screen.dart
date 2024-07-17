@@ -1,3 +1,4 @@
+import 'package:Ricetta/utils/breakpoint.dart';
 import 'package:Ricetta/widgets/category_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -24,14 +25,20 @@ class RecipeCategoryScreen extends ConsumerWidget {
       ),
       const SizedBox(height: 24.0),
       Expanded(
-          child: ListView(
-        scrollDirection: Axis.vertical,
-        children: categories
-            .map((category) => Padding(
-                padding: const EdgeInsets.only(bottom: 12.0),
-                child: CategoryCard(category: category)))
-            .toList(),
-      )),
+          child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount:
+                    MediaQuery.of(context).size.width > Breakpoints.md
+                        ? 2
+                        : 1, // 3 columns for wide screens, 2 for narrow ones
+                childAspectRatio: 6, // Adjust the size ratio of the grid items
+                crossAxisSpacing: 10, // Space between items horizontally
+                mainAxisSpacing: 10, // Space between items vertically
+              ),
+              itemCount: categories.length,
+              itemBuilder: (context, index) {
+                return CategoryCard(category: categories[index]);
+              }))
     ]);
   }
 }

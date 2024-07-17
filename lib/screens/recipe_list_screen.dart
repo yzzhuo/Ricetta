@@ -1,5 +1,6 @@
 import 'package:Ricetta/providers/category_provider.dart';
 import 'package:Ricetta/providers/recipe_provider.dart';
+import 'package:Ricetta/utils/breakpoint.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Ricetta/widgets/feature_recipe_widget.dart';
 import 'package:flutter/material.dart';
@@ -73,12 +74,25 @@ class _RecipeCategoryDetailState
                   child: Text('No recipes found for this category'),
                 ))
               : Expanded(
-                  child: ListView(
-                  children: results
-                      .map((recipe) => Padding(
-                          padding: const EdgeInsets.only(bottom: 12.0),
-                          child: FeatureRecipeWidget(recipe: recipe)))
-                      .toList(),
+                  child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: MediaQuery.of(context).size.width >
+                            Breakpoints.md
+                        ? 3
+                        : 1, // 3 columns for wide screens, 2 for narrow ones
+                    childAspectRatio:
+                        3 / 2, // Adjust the size ratio of the grid items
+                    crossAxisSpacing: 10, // Space between items horizontally
+                    mainAxisSpacing: 10, // Space between items vertically
+                  ),
+                  itemCount: results.length,
+                  itemBuilder: (context, index) {
+                    final recipe = results[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12.0),
+                      child: FeatureRecipeWidget(recipe: recipe),
+                    );
+                  },
                 ))),
     ]);
   }

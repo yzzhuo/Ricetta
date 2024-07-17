@@ -1,4 +1,5 @@
 import 'package:Ricetta/providers/user_provider.dart';
+import 'package:Ricetta/utils/breakpoint.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
@@ -111,10 +112,15 @@ class _LayoutState extends ConsumerState<Layout> {
               currentIndex: _selectedIndex,
               onTap: _onItemTapped,
             )),
-        body: Container(
+        body: Center(
+            child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 22.0),
+          width: double.infinity,
+          constraints: const BoxConstraints(
+            maxWidth: MAX_WIDTH,
+          ),
           child: widget.child,
-        ));
+        )));
   }
 }
 
@@ -163,6 +169,9 @@ class _SearchBarState extends State<SearchBar> {
                   0, 10.0, 0, 10.0), // Adjust padding as needed
             ),
             controller: _controller,
+            onSubmitted: (String value) {
+              _search(); // Assuming _search is a method that handles the search logic
+            },
           )),
           IconButton(
               onPressed: _search,

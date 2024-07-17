@@ -1,3 +1,4 @@
+import 'package:Ricetta/utils/breakpoint.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -62,8 +63,12 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         body: Center(
-            child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.9,
+            child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 22.0),
+          width: double.infinity,
+          constraints: const BoxConstraints(
+            maxWidth: MAX_WIDTH,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
