@@ -9,23 +9,18 @@ import '../screens/signup_screen.dart';
 import '../screens/setting_screen.dart';
 import 'package:Ricetta/screens/recipe_edit_screen.dart';
 
-final router = GoRouter(
-  routes: [
-    GoRoute(
-        path: '/',
-        builder: (context, state) => Layout(child: const HomeScreen())),
+final router = GoRouter(routes: [
+  ShellRoute(builder: (context, state, child) => Layout(child: child), routes: [
+    GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
     GoRoute(
         path: '/recipe/edit', builder: (context, state) => RecipeEditScreen()),
     GoRoute(
         path: '/recipe/:recipeId',
-        builder: (context, state) => Layout(
-            child: RecipeDetailScreen(
-                recipeId: state.pathParameters['recipeId'] ?? ''))),
+        builder: (context, state) => RecipeDetailScreen(
+            recipeId: state.pathParameters['recipeId'] ?? '')),
     GoRoute(
       path: '/category',
-      builder: (context, state) => Layout(
-        child: const RecipeCategoryScreen(),
-      ),
+      builder: (context, state) => const RecipeCategoryScreen(),
     ),
     GoRoute(
         path: '/recipes',
@@ -33,16 +28,14 @@ final router = GoRouter(
           final categoryId = state.uri.queryParameters['categoryId'] ?? '';
           final searchName = state.uri.queryParameters['search'] ?? '';
 
-          return Layout(
-              child: RecipeCategoryDetailScreen(
+          return RecipeCategoryDetailScreen(
             categoryId: categoryId,
             searchName: searchName,
-          ));
+          );
         }),
-    GoRoute(
-        path: '/profile', builder: (context, state) => const ProfileScreen()),
-    GoRoute(path: '/signup', builder: (context, state) => const SignupScreen()),
-    GoRoute(
-        path: '/settings', builder: (context, state) => const SettingScreen()),
-  ],
-);
+  ]),
+  GoRoute(path: '/profile', builder: (context, state) => const ProfileScreen()),
+  GoRoute(path: '/signup', builder: (context, state) => const SignupScreen()),
+  GoRoute(
+      path: '/settings', builder: (context, state) => const SettingScreen()),
+]);

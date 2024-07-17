@@ -24,7 +24,7 @@ class _LayoutState extends ConsumerState<Layout> {
   int _selectedIndex = 0;
   final options = [
     NavigateOption(name: 'Home', icon: Icons.home, path: '/'),
-    NavigateOption(name: 'Saved', icon: Icons.bookmark, path: '/recipes'),
+    NavigateOption(name: 'Recipes', icon: Icons.bookmark, path: '/recipes'),
     NavigateOption(name: 'Profile', icon: Icons.person, path: '/profile'),
   ];
 
