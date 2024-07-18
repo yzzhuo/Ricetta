@@ -85,12 +85,17 @@ class _LayoutState extends ConsumerState<Layout> {
                                 fontWeight: FontWeight.w500,
                               )),
                         )
-                      : IconButton(
+                      : TextButton(
                           onPressed: () {
-                            context.push('/profile');
+                            ref.read(userProvider.notifier).logout();
                           },
-                          icon: const Icon(Icons.account_circle,
-                              color: kPrimaryLabelColor)),
+                          child: const Text('Log out',
+                              style: TextStyle(
+                                color: kPrimaryLabelColor,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              )),
+                        ),
                   const SizedBox(width: 4.0),
                 ]))),
         bottomNavigationBar: Container(
