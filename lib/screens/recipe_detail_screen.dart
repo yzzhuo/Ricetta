@@ -1,5 +1,6 @@
 import 'package:Ricetta/models/recipe.dart';
 import 'package:Ricetta/providers/recipe_provider.dart';
+import 'package:Ricetta/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,7 +23,7 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen>
       // Trigger fetching the question when the widget is first built
       ref.read(recipesProvider.notifier).getRecipeDetailById(widget.recipeId);
     });
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -35,11 +36,34 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen>
   Widget build(BuildContext context) {
     final recipeState = ref.watch(recipesProvider);
     final recipe = recipeState.recipe;
+    final user = ref.watch(userProvider);
+
+    handleFavourte() async {
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please login to add to favourite')),
+        );
+      } else {
+        try {
+          if (recipe == null) return;
+          await ref
+              .read(recipesProvider.notifier)
+              .addFavoriteRecipe(recipe.id!, user.uid, !recipe.isFavourite);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Added to favourites successfully!')),
+          );
+          ref.read(recipesProvider.notifier).getRecipeDetailById(recipe.id!);
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to add to favourite')),
+          );
+        }
+      }
+    }
 
     if (recipe == null) {
       return const Center(child: CircularProgressIndicator());
     }
-
     return Column(children: [
       SizedBox(
         height: 226,
@@ -51,16 +75,34 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen>
         ),
       ),
       const SizedBox(height: 26.0),
-      Text(
-        recipe.title,
-        style: const TextStyle(
-          color: Colors.black,
-          fontSize: 28,
-          fontFamily: 'SF Pro Display',
-          fontWeight: FontWeight.w700,
-          height: 0,
-        ),
-      ),
+      Row(children: [
+        Expanded(
+            child: Center(
+                child: Text(
+          recipe.title,
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 28,
+            fontFamily: 'SF Pro Display',
+            fontWeight: FontWeight.w700,
+            height: 0,
+          ),
+        ))),
+        Row(children: [
+          IconButton(
+              onPressed: handleFavourte,
+              icon: recipe.isFavourite
+                  ? const Icon(Icons.favorite)
+                  : const Icon(Icons.favorite_border)),
+          recipe.favouriteTotal != 0
+              ? Text(recipe.favouriteTotal.toString(),
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400))
+              : const SizedBox()
+        ])
+      ]),
       const SizedBox(height: 12.0),
       TabBar(
         controller: _tabController,

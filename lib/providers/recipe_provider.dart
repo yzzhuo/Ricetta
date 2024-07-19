@@ -42,11 +42,15 @@ class RecipeNotifier extends StateNotifier<RecipeState> {
       final newRecipes = snapshot.docs.map((doc) {
         final isFavourite =
             favouriteRecipes.docs.any((fav) => fav['recipeId'] == doc.id);
+        final favouriteTotal = favouriteRecipes.docs
+            .where((fav) => fav['recipeId'] == doc.id)
+            .length;
         return Recipe.fromFirestore(
           doc.data(),
           categories,
           doc.id,
           isFavourite: isFavourite,
+          favouriteTotal: favouriteTotal,
         );
       });
       recipes = newRecipes.toList();
@@ -59,8 +63,18 @@ class RecipeNotifier extends StateNotifier<RecipeState> {
   getRecipeDetailById(String recipeId) async {
     state = RecipeState(isLoading: true, recipes: state.recipes, recipe: null);
     final snapshot = await _firestore.collection('recipes').doc(recipeId).get();
+    final favouriteRecipes = await _firestore
+        .collection('favourite_recipes')
+        .where('uid', isEqualTo: user!.uid)
+        .get();
+    final isFavourite =
+        favouriteRecipes.docs.any((fav) => fav['recipeId'] == recipeId);
+    final favouriteTotal = favouriteRecipes.docs
+        .where((fav) => fav['recipeId'] == recipeId)
+        .length;
     final recipe = Recipe.fromFirestore(
-        snapshot.data() as Map<String, dynamic>, categories, snapshot.id);
+        snapshot.data() as Map<String, dynamic>, categories, snapshot.id,
+        isFavourite: isFavourite, favouriteTotal: favouriteTotal);
     state =
         RecipeState(recipes: state.recipes, recipe: recipe, isLoading: false);
     return recipe;
@@ -120,6 +134,7 @@ class RecipeNotifier extends StateNotifier<RecipeState> {
     final newRecipes = state.recipes.map((recipe) {
       if (recipe.id == recipeId) {
         recipe.isFavourite = isFavourite;
+        recipe.favouriteTotal += isFavourite ? 1 : -1;
       }
       return recipe;
     }).toList();

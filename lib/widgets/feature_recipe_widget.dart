@@ -106,11 +106,20 @@ class FeatureRecipeWidget extends ConsumerWidget {
                                 },
                                 icon: const Icon(Icons.delete))
                             : const SizedBox(),
-                        IconButton(
-                            onPressed: handleFavourte,
-                            icon: recipe.isFavourite
-                                ? const Icon(Icons.favorite)
-                                : const Icon(Icons.favorite_border))
+                        Row(children: [
+                          IconButton(
+                              onPressed: handleFavourte,
+                              icon: recipe.isFavourite
+                                  ? const Icon(Icons.favorite)
+                                  : const Icon(Icons.favorite_border)),
+                          recipe.favouriteTotal != 0
+                              ? Text(recipe.favouriteTotal.toString(),
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400))
+                              : const SizedBox()
+                        ])
                       ]))
             ])));
   }

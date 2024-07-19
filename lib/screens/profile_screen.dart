@@ -122,6 +122,9 @@ class _PorfileContentScreen extends ConsumerState<PorfileContentScreen>
                     : buildRecipeList(
                         recipes: myRecipes,
                         context: context,
+                        onEdit: (String recipeId) {
+                          context.push('/edit/recipe?id=$recipeId');
+                        },
                         onDelete: (recipeId) async {
                           ref
                               .read(recipesProvider.notifier)
@@ -136,7 +139,8 @@ class _PorfileContentScreen extends ConsumerState<PorfileContentScreen>
 Widget buildRecipeList(
     {required List<Recipe> recipes,
     required BuildContext context,
-    Function? onDelete}) {
+    Function? onDelete,
+    Function? onEdit}) {
   return GridView.builder(
     padding: const EdgeInsets.only(top: 20),
     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -153,9 +157,11 @@ Widget buildRecipeList(
           padding: const EdgeInsets.only(bottom: 12.0),
           child: FeatureRecipeWidget(
               recipe: recipe,
-              onEdit: () {
-                context.push('/edit/recipe?id=${recipe.id}');
-              },
+              onEdit: onEdit != null
+                  ? () {
+                      onEdit(recipe.id);
+                    }
+                  : null,
               onDelete: onDelete != null
                   ? () {
                       showDialog(
