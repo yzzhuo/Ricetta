@@ -7,7 +7,10 @@ import 'package:go_router/go_router.dart';
 
 class FeatureRecipeWidget extends ConsumerWidget {
   final Recipe recipe;
-  const FeatureRecipeWidget({super.key, required this.recipe});
+  final Function? onEdit;
+  final Function? onDelete;
+  const FeatureRecipeWidget(
+      {super.key, required this.recipe, this.onEdit, this.onDelete});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -61,10 +64,12 @@ class FeatureRecipeWidget extends ConsumerWidget {
                         topRight: Radius.circular(16.0)),
                     child: AspectRatio(
                         aspectRatio: 315 / 204,
-                        child: Image.network(
-                          recipe.imageUrl,
-                          fit: BoxFit.cover,
-                        ))),
+                        child: recipe.imageUrl.isNotEmpty
+                            ? Image.network(
+                                recipe.imageUrl,
+                                fit: BoxFit.cover,
+                              )
+                            : const Placeholder())),
               )),
               Container(
                   alignment: Alignment.centerLeft,
@@ -81,11 +86,32 @@ class FeatureRecipeWidget extends ConsumerWidget {
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(recipe.title,
-                            style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600)),
+                        Expanded(
+                            child: Text(recipe.title,
+                                style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600))),
+                        onEdit != null
+                            ? IconButton(
+                                onPressed: () {
+                                  onEdit!();
+                                },
+                                icon: const Icon(Icons.edit))
+                            : onDelete != null
+                                ? IconButton(
+                                    onPressed: () {
+                                      onDelete!();
+                                    },
+                                    icon: const Icon(Icons.delete))
+                                : const SizedBox(),
+                        onDelete != null
+                            ? IconButton(
+                                onPressed: () {
+                                  onDelete!();
+                                },
+                                icon: const Icon(Icons.delete))
+                            : const SizedBox(),
                         IconButton(
                             onPressed: handleFavourte,
                             icon: recipe.isFavourite

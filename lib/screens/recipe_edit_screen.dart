@@ -1,6 +1,7 @@
 import 'package:Ricetta/models/category.dart';
 import 'package:Ricetta/models/recipe.dart';
 import 'package:Ricetta/providers/category_provider.dart';
+import 'package:Ricetta/providers/recipe_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,9 +18,9 @@ final Recipe defaultRecipe = Recipe(
 );
 
 class RecipeEditScreen extends ConsumerStatefulWidget {
-  Recipe? recipe; // Assuming there's a Recipe model
-  RecipeEditScreen({super.key, this.recipe}) {
-    recipe = recipe ?? defaultRecipe;
+  String? recipeId;
+  RecipeEditScreen({super.key, this.recipeId}) {
+    print('RecipeEditScreen: $recipeId');
   }
 
   @override
@@ -28,15 +29,24 @@ class RecipeEditScreen extends ConsumerStatefulWidget {
 
 class _RecipeEditScreenState extends ConsumerState<RecipeEditScreen> {
   late Recipe _editableRecipe;
-  final _formKey = GlobalKey<FormState>();
-  late TextEditingController _titleController;
+  late TextEditingController _titleController = TextEditingController(text: '');
 
   @override
   void initState() {
     super.initState();
-    _editableRecipe = widget.recipe!;
-    _titleController = TextEditingController(text: widget.recipe?.title ?? '');
-    _titleController.addListener(_updateTitle);
+    _editableRecipe = defaultRecipe;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final data = widget.recipeId != null
+          ? await ref
+              .watch(recipesProvider.notifier)
+              .getRecipeDetailById(widget.recipeId!)
+          : defaultRecipe;
+      _titleController = TextEditingController(text: data.title ?? '');
+      _titleController.addListener(_updateTitle);
+      setState(() {
+        _editableRecipe = data;
+      });
+    });
   }
 
   @override
@@ -83,8 +93,8 @@ class _RecipeEditScreenState extends ConsumerState<RecipeEditScreen> {
     ];
     return Scaffold(
         appBar: AppBar(
-            title:
-                Text(widget.recipe == null ? 'Create Recipe' : 'Edit Recipe')),
+            title: Text(
+                widget.recipeId == null ? 'Create Recipe' : 'Edit Recipe')),
         body: Column(
           children: [
             Expanded(
@@ -143,7 +153,7 @@ class _RecipeEditScreenState extends ConsumerState<RecipeEditScreen> {
                           const SizedBox(height: 8),
                           Expanded(
                               child: Column(
-                                  children: widget.recipe!.ingredients
+                                  children: _editableRecipe.ingredients
                                       .asMap()
                                       .entries
                                       .map((entry) => IngredientRow(
@@ -242,12 +252,42 @@ class _RecipeEditScreenState extends ConsumerState<RecipeEditScreen> {
                 color: Theme.of(context).primaryColor,
                 textColor: Colors.black,
                 onPressed: () {
-                  print(_editableRecipe);
-                  if (_formKey.currentState!.validate()) {
-                    print(_editableRecipe);
-                    // Save the recipe
-                    // If widget.recipe is null, create a new recipe
-                    // Otherwise, update the existing recipe
+                  if (_editableRecipe.title.isEmpty ||
+                      _editableRecipe.categoryId.isEmpty ||
+                      _editableRecipe.ingredients.isEmpty ||
+                      _editableRecipe.steps.isEmpty) {
+                    // Show an alert dialog or a snackbar to inform the user to fill all fields
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text("Incomplete Information"),
+                          content: const Text(
+                              "Please fill in all fields: name, category, ingredients, and steps."),
+                          actions: <Widget>[
+                            ElevatedButton(
+                              child: const Text("OK"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  } else {
+                    if (widget.recipeId != null) {
+                      // Update the recipe
+                      ref
+                          .watch(recipesProvider.notifier)
+                          .updateRecipe(_editableRecipe);
+                    } else {
+                      // Add the recipe
+                      ref
+                          .watch(recipesProvider.notifier)
+                          .addRecipe(_editableRecipe);
+                    }
+                    Navigator.pop(context);
                   }
                 },
                 child: const Text(

@@ -56,17 +56,35 @@ class RecipeNotifier extends StateNotifier<RecipeState> {
         RecipeState(recipes: recipes, recipe: state.recipe, isLoading: false);
   }
 
-  void getRecipeDetailById(String recipeId) async {
+  getRecipeDetailById(String recipeId) async {
     state = RecipeState(isLoading: true, recipes: state.recipes, recipe: null);
     final snapshot = await _firestore.collection('recipes').doc(recipeId).get();
     final recipe = Recipe.fromFirestore(
         snapshot.data() as Map<String, dynamic>, categories, snapshot.id);
     state =
         RecipeState(recipes: state.recipes, recipe: recipe, isLoading: false);
+    return recipe;
+  }
+
+  void updateRecipe(Recipe recipe) async {
+    // only allow authenticated users to update recipes
+    if (user == null) return;
+    final recipeData = recipe.toFirestore();
+    await _firestore.collection('recipes').doc(recipe.id).update(recipeData);
+    final newRecipes = state.recipes.map((r) {
+      if (r.id == recipe.id) {
+        return recipe;
+      }
+      return r;
+    }).toList();
+    state = RecipeState(recipes: newRecipes, recipe: recipe);
   }
 
   void addRecipe(Recipe recipe) async {
+    // only allow authenticated users to add recipes
+    if (user == null) return;
     final recipeData = recipe.toFirestore();
+    recipeData['userId'] = user!.uid;
     final recipeRef = await _firestore.collection('recipes').add(recipeData);
     final newRecipe =
         Recipe.fromFirestore(recipeData, categories, recipeRef.id);

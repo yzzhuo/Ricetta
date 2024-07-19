@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/layout.dart';
 import '../screens/home_screen.dart';
@@ -33,7 +34,11 @@ final router = GoRouter(routes: [
         }),
   ]),
   GoRoute(
-      path: '/edit/recipe', builder: (context, state) => RecipeEditScreen()),
+      path: '/edit/recipe',
+      builder: (context, state) {
+        final recipeId = state.uri.queryParameters['id'] ?? '';
+        return RecipeEditScreen(recipeId: recipeId);
+      }),
   GoRoute(path: '/profile', builder: (context, state) => const ProfileScreen()),
   GoRoute(path: '/signup', builder: (context, state) => const SignupScreen()),
   GoRoute(

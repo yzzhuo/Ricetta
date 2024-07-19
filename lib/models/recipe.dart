@@ -32,6 +32,7 @@ class Recipe {
   List<Ingredient> ingredients;
   List<String> steps;
   String categoryId;
+  String? userId;
   late bool isFavourite;
 
   Recipe({
@@ -43,6 +44,7 @@ class Recipe {
     required this.categoryId,
     this.id,
     this.isFavourite = false,
+    this.userId,
   });
 
   @override
@@ -65,6 +67,7 @@ class Recipe {
       category: category.firstWhere((cat) => cat.id == data['categoryId']),
       categoryId: data['categoryId'],
       isFavourite: isFavourite,
+      userId: data['userId'],
     );
   }
 
@@ -77,6 +80,7 @@ class Recipe {
           .toList(),
       'steps': steps,
       'categoryId': categoryId,
+      'userId': userId,
     };
   }
 }
