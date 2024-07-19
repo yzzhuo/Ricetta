@@ -61,27 +61,6 @@ class _PorfileContentScreen extends ConsumerState<PorfileContentScreen>
         recipes.where((recipe) => recipe.userId == user!.uid).toList();
 
     return Scaffold(
-        appBar: AppBar(
-            title: const Text('Profile',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 34,
-                  fontWeight: FontWeight.w700,
-                )),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                context.pop();
-              },
-            ),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.settings),
-                onPressed: () async {
-                  context.push('/settings');
-                },
-              )
-            ]),
         floatingActionButton: _selectedIndex == 1
             ? FloatingActionButton(
                 onPressed: () {

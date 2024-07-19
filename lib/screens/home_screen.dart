@@ -96,8 +96,8 @@ class CategoriesList extends ConsumerWidget {
       Expanded(
           child: isMobile
               ? ListView.separated(
-                  itemCount:
-                      3, // Replace 'items.length' with the actual length of your list
+                  itemCount: categories
+                      .length, // Replace 'items.length' with the actual length of your list
                   separatorBuilder: (context, index) {
                     return const SizedBox(
                         height:

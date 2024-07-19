@@ -4,6 +4,7 @@ import 'package:Ricetta/providers/category_provider.dart';
 import 'package:Ricetta/providers/recipe_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 final Recipe defaultRecipe = Recipe(
   id: '',
@@ -29,7 +30,7 @@ class RecipeEditScreen extends ConsumerStatefulWidget {
 
 class _RecipeEditScreenState extends ConsumerState<RecipeEditScreen> {
   late Recipe _editableRecipe;
-  late TextEditingController _titleController;
+  late TextEditingController _titleController = TextEditingController(text: '');
 
   @override
   void initState() {
@@ -92,6 +93,7 @@ class _RecipeEditScreenState extends ConsumerState<RecipeEditScreen> {
       ...categories
     ];
     return Scaffold(
+        key: const Key('recipe_edit_screen'),
         appBar: AppBar(
             title:
                 Text(widget.recipeId == '' ? 'Create Recipe' : 'Edit Recipe')),
@@ -288,7 +290,7 @@ class _RecipeEditScreenState extends ConsumerState<RecipeEditScreen> {
                           .watch(recipesProvider.notifier)
                           .addRecipe(_editableRecipe);
                     }
-                    Navigator.pop(context);
+                    context.go('/profile');
                   }
                 },
                 child: const Text(

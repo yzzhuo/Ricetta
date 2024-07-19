@@ -32,6 +32,8 @@ final router = GoRouter(routes: [
             searchName: searchName,
           );
         }),
+    GoRoute(
+        path: '/profile', builder: (context, state) => const ProfileScreen()),
   ]),
   GoRoute(
       path: '/edit/recipe',
@@ -39,7 +41,6 @@ final router = GoRouter(routes: [
         final recipeId = state.uri.queryParameters['id'] ?? '';
         return RecipeEditScreen(recipeId: recipeId);
       }),
-  GoRoute(path: '/profile', builder: (context, state) => const ProfileScreen()),
   GoRoute(path: '/signup', builder: (context, state) => const SignupScreen()),
   GoRoute(
       path: '/settings', builder: (context, state) => const SettingScreen()),
