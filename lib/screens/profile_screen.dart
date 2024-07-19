@@ -114,18 +114,29 @@ class _PorfileContentScreen extends ConsumerState<PorfileContentScreen>
                     ? const Center(
                         child:
                             Text("You don't have any favourites recipes yet."))
-                    : buildRecipeList(favouriteRecipes, context),
+                    : buildRecipeList(
+                        recipes: favouriteRecipes, context: context),
                 myRecipes.isEmpty
                     ? const Center(
                         child: Text("You don't have any recipes yet."))
-                    : buildRecipeList(myRecipes, context),
+                    : buildRecipeList(
+                        recipes: myRecipes,
+                        context: context,
+                        onDelete: (recipeId) async {
+                          ref
+                              .read(recipesProvider.notifier)
+                              .deleteRecipe(recipeId);
+                        }),
               ]))
             ])));
   }
 }
 
 // Method to build the recipe list view
-Widget buildRecipeList(List<Recipe> recipes, BuildContext context) {
+Widget buildRecipeList(
+    {required List<Recipe> recipes,
+    required BuildContext context,
+    Function? onDelete}) {
   return GridView.builder(
     padding: const EdgeInsets.only(top: 20),
     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -139,13 +150,50 @@ Widget buildRecipeList(List<Recipe> recipes, BuildContext context) {
     itemBuilder: (context, index) {
       final recipe = recipes[index];
       return Padding(
-        padding: const EdgeInsets.only(bottom: 12.0),
-        child: FeatureRecipeWidget(
-            recipe: recipe,
-            onEdit: () {
-              context.push('/edit/recipe?id=${recipe.id}');
-            }),
-      );
+          padding: const EdgeInsets.only(bottom: 12.0),
+          child: FeatureRecipeWidget(
+              recipe: recipe,
+              onEdit: () {
+                context.push('/edit/recipe?id=${recipe.id}');
+              },
+              onDelete: onDelete != null
+                  ? () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text('Delete Recipe'),
+                            content: const Text(
+                                'Are you sure you want to delete this recipe?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  try {
+                                    await onDelete(recipe.id);
+                                    // close the dialog
+                                    Navigator.of(context).pop();
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content:
+                                              Text('Failed to delete recipe')),
+                                    );
+                                  }
+                                },
+                                child: const Text('Delete'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  : null));
     },
   );
 }

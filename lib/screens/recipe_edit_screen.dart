@@ -29,14 +29,14 @@ class RecipeEditScreen extends ConsumerStatefulWidget {
 
 class _RecipeEditScreenState extends ConsumerState<RecipeEditScreen> {
   late Recipe _editableRecipe;
-  late TextEditingController _titleController = TextEditingController(text: '');
+  late TextEditingController _titleController;
 
   @override
   void initState() {
     super.initState();
     _editableRecipe = defaultRecipe;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final data = widget.recipeId != null
+      final data = widget.recipeId != ''
           ? await ref
               .watch(recipesProvider.notifier)
               .getRecipeDetailById(widget.recipeId!)
@@ -93,8 +93,8 @@ class _RecipeEditScreenState extends ConsumerState<RecipeEditScreen> {
     ];
     return Scaffold(
         appBar: AppBar(
-            title: Text(
-                widget.recipeId == null ? 'Create Recipe' : 'Edit Recipe')),
+            title:
+                Text(widget.recipeId == '' ? 'Create Recipe' : 'Edit Recipe')),
         body: Column(
           children: [
             Expanded(
@@ -256,6 +256,7 @@ class _RecipeEditScreenState extends ConsumerState<RecipeEditScreen> {
                       _editableRecipe.categoryId.isEmpty ||
                       _editableRecipe.ingredients.isEmpty ||
                       _editableRecipe.steps.isEmpty) {
+                    print(_editableRecipe);
                     // Show an alert dialog or a snackbar to inform the user to fill all fields
                     showDialog(
                       context: context,
@@ -276,7 +277,7 @@ class _RecipeEditScreenState extends ConsumerState<RecipeEditScreen> {
                       },
                     );
                   } else {
-                    if (widget.recipeId != null) {
+                    if (widget.recipeId != '') {
                       // Update the recipe
                       ref
                           .watch(recipesProvider.notifier)

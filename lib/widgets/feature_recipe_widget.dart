@@ -98,13 +98,7 @@ class FeatureRecipeWidget extends ConsumerWidget {
                                   onEdit!();
                                 },
                                 icon: const Icon(Icons.edit))
-                            : onDelete != null
-                                ? IconButton(
-                                    onPressed: () {
-                                      onDelete!();
-                                    },
-                                    icon: const Icon(Icons.delete))
-                                : const SizedBox(),
+                            : const SizedBox(),
                         onDelete != null
                             ? IconButton(
                                 onPressed: () {

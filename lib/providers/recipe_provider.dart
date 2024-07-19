@@ -80,6 +80,14 @@ class RecipeNotifier extends StateNotifier<RecipeState> {
     state = RecipeState(recipes: newRecipes, recipe: recipe);
   }
 
+  void deleteRecipe(String recipeId) async {
+    // only allow authenticated users to delete recipes
+    if (user == null) return;
+    await _firestore.collection('recipes').doc(recipeId).delete();
+    final newRecipes = state.recipes.where((r) => r.id != recipeId).toList();
+    state = RecipeState(recipes: newRecipes, recipe: state.recipe);
+  }
+
   void addRecipe(Recipe recipe) async {
     // only allow authenticated users to add recipes
     if (user == null) return;
