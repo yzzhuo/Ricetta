@@ -66,14 +66,15 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen>
     }
     return Column(children: [
       SizedBox(
-        height: 226,
-        child: Image.network(
-          recipe.imageUrl,
-          width: double.infinity,
-          height: 300,
-          fit: BoxFit.cover,
-        ),
-      ),
+          height: 226,
+          child: recipe.imageUrl.isNotEmpty
+              ? Image.network(
+                  recipe.imageUrl,
+                  width: double.infinity,
+                  height: 300,
+                  fit: BoxFit.cover,
+                )
+              : const Placeholder()),
       const SizedBox(height: 26.0),
       Row(children: [
         Expanded(
