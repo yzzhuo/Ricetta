@@ -39,12 +39,15 @@ class RecipeNotifier extends StateNotifier<RecipeState> {
           .collection('favourite_recipes')
           .where('uid', isEqualTo: user!.uid)
           .get();
-      final newRecipes = snapshot.docs.map((doc) {
+      final newRecipesFutures = snapshot.docs.map((doc) async {
         final isFavourite =
             favouriteRecipes.docs.any((fav) => fav['recipeId'] == doc.id);
-        final favouriteTotal = favouriteRecipes.docs
-            .where((fav) => fav['recipeId'] == doc.id)
-            .length;
+        final favouriteTotal = await _firestore
+            .collection('favourite_recipes')
+            .where('recipeId',
+                isEqualTo: doc.id) // Assuming recipeId should be doc.id
+            .get()
+            .then((value) => value.docs.length);
         return Recipe.fromFirestore(
           doc.data(),
           categories,
@@ -53,6 +56,8 @@ class RecipeNotifier extends StateNotifier<RecipeState> {
           favouriteTotal: favouriteTotal,
         );
       });
+
+      final newRecipes = await Future.wait(newRecipesFutures);
       recipes = newRecipes.toList();
     }
 
@@ -63,15 +68,20 @@ class RecipeNotifier extends StateNotifier<RecipeState> {
   getRecipeDetailById(String recipeId) async {
     state = RecipeState(isLoading: true, recipes: state.recipes, recipe: null);
     final snapshot = await _firestore.collection('recipes').doc(recipeId).get();
-    final favouriteRecipes = await _firestore
+    bool isFavourite = false;
+    if (user != null) {
+      final favouriteRecipes = await _firestore
+          .collection('favourite_recipes')
+          .where('uid', isEqualTo: user!.uid)
+          .get();
+      isFavourite =
+          favouriteRecipes.docs.any((fav) => fav['recipeId'] == recipeId);
+    }
+    final favouriteTotal = await _firestore
         .collection('favourite_recipes')
-        .where('uid', isEqualTo: user!.uid)
-        .get();
-    final isFavourite =
-        favouriteRecipes.docs.any((fav) => fav['recipeId'] == recipeId);
-    final favouriteTotal = favouriteRecipes.docs
-        .where((fav) => fav['recipeId'] == recipeId)
-        .length;
+        .where('recipeId', isEqualTo: recipeId)
+        .get()
+        .then((value) => value.docs.length);
     final recipe = Recipe.fromFirestore(
         snapshot.data() as Map<String, dynamic>, categories, snapshot.id,
         isFavourite: isFavourite, favouriteTotal: favouriteTotal);
