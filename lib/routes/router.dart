@@ -13,8 +13,6 @@ final router = GoRouter(routes: [
   ShellRoute(builder: (context, state, child) => Layout(child: child), routes: [
     GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
     GoRoute(
-        path: '/recipe/edit', builder: (context, state) => RecipeEditScreen()),
-    GoRoute(
         path: '/recipe/:recipeId',
         builder: (context, state) => RecipeDetailScreen(
             recipeId: state.pathParameters['recipeId'] ?? '')),
@@ -34,6 +32,8 @@ final router = GoRouter(routes: [
           );
         }),
   ]),
+  GoRoute(
+      path: '/edit/recipe', builder: (context, state) => RecipeEditScreen()),
   GoRoute(path: '/profile', builder: (context, state) => const ProfileScreen()),
   GoRoute(path: '/signup', builder: (context, state) => const SignupScreen()),
   GoRoute(

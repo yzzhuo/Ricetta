@@ -16,16 +16,22 @@ class Ingredient {
       quantity = value;
     }
   }
+
+  @override
+  String toString() {
+    // Customize the output format as needed
+    return 'Ingredient: $name, Quantity: $quantity';
+  }
 }
 
 class Recipe {
   String? id;
   RecipeCategory? category;
-  final String title;
-  final String imageUrl;
+  String title;
+  String imageUrl;
   List<Ingredient> ingredients;
-  final List<String> steps;
-  final String categoryId;
+  List<String> steps;
+  String categoryId;
   late bool isFavourite;
 
   Recipe({
@@ -38,6 +44,12 @@ class Recipe {
     this.id,
     this.isFavourite = false,
   });
+
+  @override
+  String toString() {
+    // Customize the output format as needed
+    return 'Recipe: $title, imageUrl: $imageUrl, Ingredients: ${ingredients.map((i) => i.toString())}, steps: $steps, categoryId:$categoryId';
+  }
 
   factory Recipe.fromFirestore(
       Map<String, dynamic> data, List<RecipeCategory> category, String id,

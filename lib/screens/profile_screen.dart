@@ -26,6 +26,13 @@ class PorfileContentScreen extends ConsumerStatefulWidget {
 class _PorfileContentScreen extends ConsumerState<PorfileContentScreen>
     with TickerProviderStateMixin {
   late final TabController _tabController;
+  int _selectedIndex = 0; // 默认选中第一个Tab
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index; // 更新选中的Tab索引
+    });
+  }
 
   @override
   void initState() {
@@ -66,20 +73,23 @@ class _PorfileContentScreen extends ConsumerState<PorfileContentScreen>
                 },
               )
             ]),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            context.push('/recipe/edit');
-          },
-          foregroundColor: Colors.black,
-          backgroundColor: Theme.of(context).primaryColor,
-          shape: const CircleBorder(),
-          child: const Icon(Icons.add),
-        ),
+        floatingActionButton: _selectedIndex == 1
+            ? FloatingActionButton(
+                onPressed: () {
+                  context.push('/edit/recipe');
+                },
+                foregroundColor: Colors.black,
+                backgroundColor: Theme.of(context).primaryColor,
+                shape: const CircleBorder(),
+                child: const Icon(Icons.add),
+              )
+            : null,
         body: Container(
             padding: const EdgeInsets.all(20),
             child: Column(children: [
               TabBar(
                 controller: _tabController,
+                onTap: _onItemTapped,
                 tabs: const <Widget>[
                   Tab(
                     text: 'Favourites',

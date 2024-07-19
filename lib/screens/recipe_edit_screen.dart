@@ -30,26 +30,36 @@ class _RecipeEditScreenState extends ConsumerState<RecipeEditScreen> {
   late Recipe _editableRecipe;
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _titleController;
-  late TextEditingController _categoryController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _editableRecipe = widget.recipe!;
     _titleController = TextEditingController(text: widget.recipe?.title ?? '');
-    _categoryController =
-        TextEditingController(text: widget.recipe?.categoryId ?? '');
+    _titleController.addListener(_updateTitle);
   }
 
   @override
   void dispose() {
     _titleController.dispose();
-    _categoryController.dispose();
     super.dispose();
   }
 
+  void _updateCategory(String value) {
+    // Update the category in the model
+    setState(() {
+      _editableRecipe.categoryId = value;
+    });
+  }
+
+  void _updateTitle() {
+    // Update the title in the model
+    setState(() {
+      _editableRecipe.title = _titleController.text;
+    });
+  }
+
   void _removeIngredient(String name) {
-    print(_editableRecipe.ingredients);
     // Method to remove an ingredient
     setState(() {
       _editableRecipe.ingredients
@@ -57,9 +67,20 @@ class _RecipeEditScreenState extends ConsumerState<RecipeEditScreen> {
     });
   }
 
+  void _removeStep(String name) {
+    // Method to remove a step
+    setState(() {
+      _editableRecipe.steps.removeWhere((element) => element == name);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final categories = ref.watch(recipeCategoriesProvider);
+    final categoriesOptions = [
+      RecipeCategory(id: '', name: 'Select a category', image: ''),
+      ...categories
+    ];
     return Scaffold(
         appBar: AppBar(
             title:
@@ -94,17 +115,22 @@ class _RecipeEditScreenState extends ConsumerState<RecipeEditScreen> {
                                 fontWeight: FontWeight.w600,
                               )),
                           const SizedBox(height: 8),
-                          DropdownMenu(
-                            width: MediaQuery.of(context).size.width * 0.9,
-                            controller: _categoryController,
-                            dropdownMenuEntries: categories
-                                .map<DropdownMenuEntry<dynamic>>(
-                                    (RecipeCategory category) =>
-                                        DropdownMenuEntry<dynamic>(
-                                          value: category.id,
-                                          label: category.name,
-                                        ))
-                                .toList(),
+                          DropdownButton<String>(
+                            value: _editableRecipe.categoryId,
+                            onChanged: (String? value) {
+                              print('Selected category: $value');
+                              setState(() {
+                                _editableRecipe.categoryId = value!;
+                              });
+                            },
+                            items: categoriesOptions
+                                .map<DropdownMenuItem<String>>(
+                                    (RecipeCategory category) {
+                              return DropdownMenuItem<String>(
+                                value: category.id,
+                                child: Text(category.name),
+                              );
+                            }).toList(),
                           ),
                           const SizedBox(height: 24),
                           // ingredients
@@ -155,29 +181,58 @@ class _RecipeEditScreenState extends ConsumerState<RecipeEditScreen> {
                           Expanded(
                               child: Column(
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text('1',
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold)),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                      child: TextFormField(
-                                    decoration: const InputDecoration(
-                                      hintText: 'Quantity. e.g. 2',
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter the quantity';
-                                      }
-                                      return null;
-                                    },
-                                  ))
-                                ],
-                              ),
+                              ..._editableRecipe.steps
+                                  .asMap()
+                                  .entries
+                                  .map((entry) => Row(
+                                        key: Key(
+                                            entry.value + entry.key.toString()),
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text((entry.key + 1).toString(),
+                                              style: const TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold)),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                              child: TextFormField(
+                                                  initialValue: entry.value,
+                                                  decoration:
+                                                      const InputDecoration(
+                                                    hintText:
+                                                        'Step. e.g. Mix well',
+                                                  ),
+                                                  validator: (value) {
+                                                    if (value == null ||
+                                                        value.isEmpty) {
+                                                      return 'Please enter the step';
+                                                    }
+                                                    return null;
+                                                  },
+                                                  onChanged: (String value) {
+                                                    _editableRecipe
+                                                            .steps[entry.key] =
+                                                        value;
+                                                  })),
+                                          IconButton(
+                                            icon: const Icon(
+                                                Icons.delete_outline),
+                                            onPressed: () {
+                                              final step = _editableRecipe
+                                                  .steps[entry.key];
+                                              _removeStep(step);
+                                            },
+                                          )
+                                        ],
+                                      )),
+                              IconButton(
+                                  icon: const Icon(Icons.add),
+                                  onPressed: () => {
+                                        setState(() {
+                                          _editableRecipe.steps.add('');
+                                        })
+                                      }),
                             ],
                           ))
                         ]))),
@@ -187,11 +242,12 @@ class _RecipeEditScreenState extends ConsumerState<RecipeEditScreen> {
                 color: Theme.of(context).primaryColor,
                 textColor: Colors.black,
                 onPressed: () {
+                  print(_editableRecipe);
                   if (_formKey.currentState!.validate()) {
+                    print(_editableRecipe);
                     // Save the recipe
                     // If widget.recipe is null, create a new recipe
                     // Otherwise, update the existing recipe
-                    Navigator.pop(context);
                   }
                 },
                 child: const Text(
